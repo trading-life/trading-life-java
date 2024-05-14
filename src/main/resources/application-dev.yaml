@@ -1,0 +1,185 @@
+server:
+  tomcat:
+    uri-encoding: UTF-8
+spring:
+
+  application:
+    name: trading
+  # 数据库配置
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      # 数据库
+      url: jdbc:mysql://127.0.0.1:8003/trading?useUnicode=true&characterEncoding=UTF8&serverTimezone=Asia/Shanghai&zeroDateTimeBehavior=convertToNull&useSSL=true
+      username: root
+      password: 123456
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      # 连接池-初始化大小
+      initial-size: 10
+      # 连接池-最大连接数
+      max-active: 100
+      # 最大等待时间
+      max-wait: 60000
+      # 连接池-最小空闲数
+      min-idle: 10
+      # 检测空闲连接
+      test-while-idle: true
+      # 最小空闲时间
+      min-evictable-idle-time-millis: 300000
+  # 定时器配置
+  quartz:
+    # 使用数据库存储
+    job-store-type: jdbc
+    # 初始化完成后自动启动调度程序
+    autoStartup: true
+    jdbc:
+      initialize-schema: never
+    properties:
+      org:
+        quartz:
+          # 调度器配置
+          scheduler:
+            instanceName: bootQuartzScheduler
+            instanceId: AUTO
+          # 存储配置
+          jobStore:
+            class: org.springframework.scheduling.quartz.LocalDataSourceJobStore
+            driverDelegateClass: org.quartz.impl.jdbcjobstore.StdJDBCDelegate
+            tablePrefix: qrtz_
+            isClustered: true
+            misfireThreshold: 12000
+            clusterCheckinInterval: 15000
+            useProperties: false
+          # 线程池配置
+          threadPool:
+            threadNamePrefix: Boot_Job_Pool
+            threadPriority: 5
+            threadCount: 10
+            class: org.quartz.simpl.SimpleThreadPool
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 8018
+      database: 1
+      password: ningzaichun
+      #    password: 123456 #默认为空
+      timeout: 3000ms
+      lettuce:
+        pool:
+          max-active: 20  # 最大连接数，负值表示没有限制，默认8
+          max-wait: -1    # 最大阻塞等待时间，负值表示没限制，默认-1
+          max-idle: 8     # 最大空闲连接，默认8
+          min-idle: 0     # 最小空闲连接，默认0
+  kafka:
+    bootstrap-servers: 192.168.137.1:9093 # kafka集群信息，多个用逗号间隔
+    # 生产者
+    producer:
+      # 重试次数，设置大于0的值，则客户端会将发送失败的记录重新发送
+      retries: 3
+      # 批量处理大小，16K
+      batch-size: 16384
+      # 缓冲存储大，32M
+      buffer-memory: 33554432
+      # procedure要求leader在考虑完成请求之前收到的确认数，用于控制发送记录在服务端的持久化，其值可以为如下：
+      # acks = 0 如果设置为零，则生产者将不会等待来自服务器的任何确认，该记录将立即添加到套接字缓冲区并视为已发送。在这种情况下，无法保证服务器已收到记录，并且重试配置将不会生效（因为客户端通常不会知道任何故障），为每条记录返回的偏移量始终设置为-1。
+      # acks = 1 这意味着leader会将记录写入其本地日志，但无需等待所有副本服务器的完全确认即可做出回应，在这种情况下，如果leader在确认记录后立即失败，但在将数据复制到所有的副本服务器之前，则记录将会丢失。
+      # acks = all 这意味着leader将等待完整的同步副本集以确认记录，这保证了只要至少一个同步副本服务器仍然存活，记录就不会丢失，这是最强有力的保证，这相当于acks = -1的设置。
+      #可以设置的值为：all, -1, 0, 1
+      acks: 1
+      # 指定消息key和消息体的编解码方式
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    # 消费者
+    consumer:
+      # 消费者组
+      group-id: test-group1
+      # 是否自动提交
+      enable-auto-commit: false
+      # 消费偏移配置
+      # none：如果没有为消费者找到先前的offset的值,即没有自动维护偏移量,也没有手动维护偏移量,则抛出异常
+      # earliest：在各分区下有提交的offset时：从offset处开始消费；在各分区下无提交的offset时：从头开始消费
+      # latest：在各分区下有提交的offset时：从offset处开始消费；在各分区下无提交的offset时：从最新的数据开始消费
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    # 监听
+    listener:
+      # record：当每一条记录被消费者监听器ListenerConsumer处理之后提交
+      # batch：当每一批poll()的数据被ListenerConsumer处理之后提交
+      # time：当每一批poll()的数据被ListenerConsumer处理之后，距离上次提交时间大于TIME时提交
+      # count：当每一批poll()的数据被ListenerConsumer处理之后，被处理record数量大于等于COUNT时提交
+      # count_time：TIME或COUNT中有一个条件满足时提交
+      # manual：当每一批poll()的数据被ListenerConsumer处理之后, 手动调用Acknowledgment.acknowledge()后提交
+      # manual_immediate：手动调用Acknowledgment.acknowledge()后立即提交，一般推荐使用这种
+      ack-mode: manual_immediate
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+############## Sa-Token 配置 (文档: https://sa-token.cc) ##############
+sa-token:
+  # token 名称（同时也是 cookie 名称）
+  token-name: Authorization
+  # token 有效期（单位：秒） 默认30天，-1 代表永久有效
+  timeout: 2592000
+  # token 最低活跃频率（单位：秒），如果 token 超过此时间没有访问系统就会被冻结，默认-1 代表不限制，永不冻结
+  active-timeout: -1
+  # 是否允许同一账号多地同时登录 （为 true 时允许一起登录, 为 false 时新登录挤掉旧登录）
+  is-concurrent: true
+  # 在多人登录同一账号时，是否共用一个 token （为 true 时所有登录共用一个 token, 为 false 时每次登录新建一个 token）
+  is-share: true
+  # token 风格（默认可取值：uuid、simple-uuid、random-32、random-64、random-128、tik）
+  token-style: uuid
+  # 是否输出操作日志
+  is-log: true
+
+springdoc:
+  swagger-ui:
+    tags-sorter: alpha
+#  group-configs:
+#    - group: bis
+#      display-name: "业务接口文档"
+#      paths-to-match: '/**'
+#      packages-to-scan: org.shi9.module.bis
+#    - group: system
+#      display-name: "系统接口文档"
+#      paths-to-match: '/**'
+#      packages-to-scan: org.shi9.module.system
+#  default-flat-param-object: true
+knife4j:
+  # 开启增强配置
+  enable: true
+  # 开启生产环境屏蔽（如果是生产环境，需要把下面配置设置true）
+  #  production: true
+  setting:
+    language: zh_cn
+    swagger-model-name: 实体类列表
+#  basic: # 开始授权认证
+#    enable: true
+#    username: admin
+#    password: 123456
+
+dolphindb:
+  host_name: 127.0.0.1
+  port: 8031
+  user_id: admin
+  password: 123456
+  initial_pool_size: 1
+
+pagehelper:
+  #分页插件会自动检测当前的数据库链接，自动选择合适的分页方式。 你可以配置helperDialect 属性来指定分页插件使用哪种方言。
+  helper-dialect: mysql
+  #分页合理化参数，默认值为 false 。当该参数设置为 true 时， pageNum<=0 时会查询第一页， pageNum>pages （超过总数时），会查询最后一页。
+  reasonable: true
+  #支持通过Mapper接口参数传递page参数,默认值为falset
+  support-methods-arguments: true
+  #默认值为 false ，当该参数设置为 true 时，如果 pageSize=0 或者 RowBounds.limit =0 就会查询出全部的结果（相当于没有执行分页查询，但是返回结果仍然是 Page 类型）。
+  pageSizeZero: false
+  #为了支持 startPage(Object params) 方法，增加了该参数来配置参数映射，用于从对象中根据属性名取值
+  params: count=countSql
+
+remote:
+  baseUrl: http://127.0.0.1:8888
+
+
+

@@ -1,0 +1,6 @@
+server:
+  port: 10008
+spring:
+  profiles:
+    active:
+      - dev

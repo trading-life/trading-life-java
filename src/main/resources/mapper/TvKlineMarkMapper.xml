@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.aiden.trading.dao.TvKlineMarkDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.aiden.trading.entity.TvKlineMark">
+        <id column="id" property="id" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+        <result column="text" property="text" />
+        <result column="label" property="label" />
+        <result column="label_font_color" property="labelFontColor" />
+        <result column="symbol" property="symbol" />
+        <result column="resolution" property="resolution" />
+        <result column="color" property="color" />
+        <result column="min_size" property="minSize" />
+        <result column="time" property="time" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        create_time,
+        update_time,
+        id, `text`, label, label_font_color, symbol, resolution, color, min_size, `time`
+    </sql>
+
+</mapper>
