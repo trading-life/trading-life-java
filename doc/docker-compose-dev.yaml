@@ -1,0 +1,333 @@
+version: '3.8'
+services:
+#  codefever:
+#    image: pgyer/codefever-community-lite:latest
+#    hostname: codefever
+#    restart: always
+#    container_name: codefever
+#    ports:
+#      - "8001:80"
+#      - "8002:22"
+#    depends_on:
+#      - mysql5.7
+#    # volumes:
+#    #   - /data/git-storage:/data/www/codefever-community/git-storage
+#    #   - /data/logs:/data/www/codefever-community/application/logs
+#    environment:
+#      TZ: Asia/Shanghai
+#      DB_HOST: "mysql"
+#      DB_PORT: "3306"
+#      DB_USER: "root"
+#      DB_PASS: "123456" # Need to be the same as MYSQL_ROOT_PASSWORD
+#      DB_NAME: "codefever_community"
+  mysql5.7:
+    hostname: mysql
+    container_name: mysql5.7
+    image: mysql:5.7.31
+    restart: always
+    ports:
+      - "8003:3306"
+    #privileged: true
+    # volumes:
+    #   - /data/mysql:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: "123456"
+      TZ: Asia/Shanghai
+    command: [
+      '--character-set-server=utf8mb4',
+      '--collation-server=utf8mb4_general_ci',
+      '--max_connections=3000',
+      '--lower_case_table_names=1'
+    ]
+
+#  jenkins:
+#    user: root
+#    hostname: jenkins
+#    container_name: jenkins
+#    image: jenkins/jenkins
+#    restart: always
+#    ports:
+#      - "8004:8080"
+#      - "8005:50000"
+#    environment:
+#      TZ: Asia/Shanghai
+#  # registry:
+#  #   restart: always
+#  #   image: registry
+#  #   container_name: registry
+#  #   hostname: registry
+#  #   ports:
+#  #     - 8006:5000
+#  #   environment:
+#  #     TZ: Asia/Shanghai
+#  nexus3:
+#    restart: always
+#    image: sonatype/nexus3:3.14.0
+#    container_name: nexus3
+#    hostname: nexus3
+#    #映射端口对应的用途：
+#    # 8081：可以通过http访问nexus应用
+#    # 8082：docker(hosted)私有仓库，可以pull和push
+#    # 8083：docker(proxy)代理远程仓库，只能pull
+#    # 8084：docker(group)私有仓库和代理的组，只能pull
+#    #使用参数 -v 建立宿主机与Docker目录映射关系，/nexus-data：docker里存nexus数据目录，所以将数据目录存放到宿主机/opt/nexus-data
+#    ports:
+#      - 8007:8081
+#      - 8008:8082
+#      - 8009:8083
+#      - 8010:8084
+#    environment:
+#      TZ: Asia/Shanghai
+  rabbitmq:
+    restart: always
+    image: rabbitmq:management
+    container_name: rabbitmq
+    hostname: rabbit
+    ports:
+      - 8011:5672
+      - 8012:15672
+    environment:
+      TZ: Asia/Shanghai
+      RABBITMQ_DEFAULT_USER: rabbit
+      RABBITMQ_DEFAULT_PASS: 123456
+#  elasticsearch:
+#    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.9
+#    container_name: elasticsearch
+#    hostname: elasticsearch
+#    restart: always
+#    ports:
+#      - 8013:9200
+#      - 8014:9300
+#    environment:
+#      - discovery.type=single-node
+#      - TZ=Asia/Shanghai
+#      - bootstrap.memory_lock=true
+#      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+#    # volumes:
+#    #   - /skywalking/elasticsearch/data:/usr/share/elasticsearch/data
+#    ulimits:
+#      memlock:
+#        soft: -1
+#        hard: -1
+#  skywalking-oap:
+#    image: docker.io/apache/skywalking-oap-server:9.1.0
+#    container_name: skywalking-oap
+#    hostname: skywalking-oap
+#    depends_on:
+#      - elasticsearch
+#    restart: always
+#    ports:
+#      - 8015:11800
+#      - 8016:12800
+#    environment:
+#      SW_CORE_RECORD_DATA_TTL: 15
+#      SW_CORE_METRICS_DATA_TTL: 15
+#      SW_STORAGE: elasticsearch
+#      SW_STORAGE_ES_CLUSTER_NODES: elasticsearch:9200
+#      SW_ENABLE_UPDATE_UI_TEMPLATE: true
+#      TZ: Asia/Shanghai
+#      JAVA_OPTS: "-Xms512m -Xmx512m"
+#  skywalking-ui:
+#    image: docker.io/apache/skywalking-ui:9.1.0
+#    container_name: skywalking-ui
+#    hostname: skywalking-ui
+#    depends_on:
+#      - skywalking-oap
+#    links:
+#      - skywalking-oap
+#    restart: always
+#    ports:
+#      - 8017:8080
+#    environment:
+#      SW_OAP_ADDRESS: http://skywalking-oap:12800
+#      SW_ZIPKIN_ADDRESS: http://skywalking-oap:9412
+#      TZ: Asia/Shanghai
+  redis:
+    image: redis:7.0.12
+    container_name: redis
+    hostname: redis
+    restart: always
+    ports:
+      - 8018:6379
+    environment:
+      TZ: Asia/Shanghai
+    command: [
+      '--requirepass ningzaichun'
+    ]
+#  sentinel-dashboard:
+#    image: bladex/sentinel-dashboard
+#    container_name: sentinel-dashboard
+#    hostname: sentinel-dashboard
+#    restart: always
+#    ports:
+#      - "8019:8858"
+#    environment:
+#      TZ: Asia/Shanghai
+  # nacos-standalone:
+  #   image: nacos/nacos-server:v2.1.0
+  #   container_name: nacos-standalone
+  #   hostname: nacos-standalone
+  #   environment:
+  #     - PREFER_HOST_MODE=hostname
+  #     - MODE=standalone
+  #     - NACOS_AUTH_IDENTITY_KEY=serverIdentity
+  #     - NACOS_AUTH_IDENTITY_VALUE=security
+  #     - NACOS_AUTH_TOKEN=SecretKey012345678901234567890123456789012345678901234567890123456789
+  #     - TZ=Asia/Shanghai
+  #   # volumes:
+  #   #   - ./standalone-logs/:/home/nacos/logs
+  #   ports:
+  #     - "8020:8848"
+  #     - "8021:9848"
+#  fund-management-admin:
+#    image: 192.168.0.208:8008/fund/fund-management-admin:v1.3
+#    container_name: fund-management-admin
+#    hostname: fund-management-admin
+#    restart: always
+#    ports:
+#      - "8022:30002"
+#    environment:
+#      TZ: Asia/Shanghai
+#  fund-management-akshare:
+#    image: 192.168.0.208:8008/fund/fund-management-akshare:v1.2
+#    container_name: fund-management-akshare
+#    hostname: fund-management-akshare
+#    restart: always
+#    ports:
+#      - "8023:30002"
+#    environment:
+#      TZ: Asia/Shanghai
+#  fund-management-view:
+#    image: 192.168.0.208:8008/fund/fund-management-view:v1.1
+#    container_name: fund-management-view
+#    hostname: fund-management-view
+#    restart: always
+#    ports:
+#      - "8024:80"
+#    environment:
+#      TZ: Asia/Shanghai
+#  consul-standalone:
+#    image: consul:1.15.4
+#    restart: always
+#    container_name: consul-standalone
+#    hostname: consul-standalone
+#    environment:
+#      - PREFER_HOST_MODE=hostname
+#      - MODE=standalone
+#      - NACOS_AUTH_IDENTITY_KEY=serverIdentity
+#      - NACOS_AUTH_IDENTITY_VALUE=security
+#      - NACOS_AUTH_TOKEN=SecretKey012345678901234567890123456789012345678901234567890123456789
+#      - TZ=Asia/Shanghai
+#    # volumes:
+#    #   - ./standalone-logs/:/home/nacos/logs
+#    # 8300 TCP协议，用于Consul集群中各个节点相互连结通信的端口
+#    # 8301 TCP或者UDP协议，用于Consul节点之间相互使用Gossip协议健康检查等交互
+#    # 8302 TCP或者UDP协议，用于单个或多个数据中心之间的服务器节点的信息同步
+#    # 8500 HTTP协议，用于API接口或者我们上述的网页管理界面访问
+#    # 8600 TCP或者UDP协议，作为DNS服务器，用于通过节点名查询节点信息
+#
+#    ports:
+#      - "8025:8300"
+#      - "8026:8301"
+#      - "8027:8302"
+#      - "8028:8500"
+#      - "8029:8600"
+#    command: consul agent -server -bootstrap-expect=1 -client=0.0.0.0 -ui -bind='{{ GetPrivateIP }}' -data-dir=/consul/data -node=consul-node -datacenter=dc1 -enable-script-checks=true -config-dir=/consul/config
+#      # agent 表示启动一个Agent进程
+#      # -server 表示该节点类型为Server节点（下面会讲解集群中的节点类型）
+#      # -ui 开启网页可视化管理界面
+#      # -node 指定该节点名称，注意每个节点的名称必须唯一不能重复！上面指定了第一台服务器节点的名称为n1，那么别的节点就得用其它名称
+#      # -bootstrap-expect 最少集群的Server节点数量，少于这个值则集群失效，这个选项必须指定，由于这里是单机部署，因此设定为1即可
+#      # -advertise 这里要指定本节点外网地址，用于在集群时告诉其它节点自己的地址，如果是在自己电脑上或者是内网搭建单节点/集群则不需要带上这个参数
+#    # -client 指定可以外部连接的地址，0.0.0.0表示外网全部可以连接
+#  docker pull dolphindb/dolphindb:v3.00.0 && docker run -itd -p 8848:8848 --name dolphindb dolphindb/dolphindb:v3.00.0 sh
+  dolphindb:
+    image: dolphindb/dolphindb:v3.00.0
+    container_name: dolphindb_compose
+    restart: always
+    hostname: dolphindb
+    ports:
+      - "8031:8848"
+    command: sh
+#    设置时区无法启动  不知道什么原因
+#    environment:
+#      - TZ=Asia/Shanghai  # 设置时区为上海
+  kafka:
+    image: 'bitnami/kafka:latest'
+    container_name: kafka
+    ports:
+      - "9092:9092"
+      - "9093:9093"
+      - "9998:9998"
+    volumes:
+      - type: volume
+        source: kafka_standalone_data_1
+        target: /bitnami/kafka
+        read_only: false
+    environment:
+      - BITNAMI_DEBUG=yes
+      # 启用KRaft模式必须设置下面三个属性
+      - KAFKA_CFG_NODE_ID=1
+      - KAFKA_CFG_PROCESS_ROLES=broker,controller
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      # broker id
+      - KAFKA_BROKER_ID=1
+      # listener的各种配置
+      - KAFKA_CFG_LISTENERS=CONTROLLER://:9094,BROKER://:9092,EXTERNAL://:9093
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,BROKER:PLAINTEXT,EXTERNAL:PLAINTEXT
+      # 注意EXTERNAL配置的是当前Docker所在的主机地址,BROKER可以使用Docker内部的网络地址即可
+      - KAFKA_CFG_ADVERTISED_LISTENERS=BROKER://kafka:9092,EXTERNAL://192.168.64.1:9093
+      # 内部各个broker之间通信用的listener
+      - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=BROKER
+      # 用来进行选举的Controller服务器，如果有多个Controller则都需要写上，这里本机
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=1@127.0.0.1:9094
+      - ALLOW_PLAINTEXT_LISTENER=yes
+      - KAFKA_CFG_MESSAGE_MAX_BYTES=10485760
+      # 开启JMX监控
+      - JMX_PORT=9998
+      - KAFKA_JMX_OPTS=-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=kafka -Dcom.sun.management.jmxremote.rmi.port=9998
+  kafka-ui:
+    container_name: kafka-ui
+    image: provectuslabs/kafka-ui:latest
+    ports:
+      - "9095:8080"
+    depends_on:
+      - kafka
+    environment:
+      KAFKA_CLUSTERS_0_NAME: kafka-stand-alone
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
+      KAFKA_CLUSTERS_0_METRICS_PORT: 9998
+#      SERVER_SERVLET_CONTEXT_PATH: /kafkaui
+      AUTH_TYPE: "LOGIN_FORM"
+      SPRING_SECURITY_USER_NAME: admin
+      SPRING_SECURITY_USER_PASSWORD: 123456
+      DYNAMIC_CONFIG_ENABLED: 'true'
+volumes:
+  kafka_standalone_data_1:
+    driver: local
+networks:
+  base-components:
+    external: false
+      # neutrino-proxy:
+      #   restart: always
+      #   image: aoshiguchen/neutrino-proxy-server:latest
+      #   container_name: neutrino-proxy
+      #   hostname: neutrino-proxy
+      #   networks:
+      #     - appnet
+      #   ports:
+      #     - 8888:8888
+      #     - 9400-9800:9400-9800/tcp
+      #   environment:
+      #     TZ: Asia/Shanghai
+      # neutrino-proxy-client:
+      #   restart: always
+      #   image: aoshiguchen/neutrino-proxy-client:latest
+      #   container_name: neutrino-proxy-client
+      #   hostname: neutrino-proxy-client
+      #   networks:
+      #     - appnet
+      #   environment:
+      #     SERVER_IP: 172.28.0.1
+    # LICENSE_KEY: we
+
