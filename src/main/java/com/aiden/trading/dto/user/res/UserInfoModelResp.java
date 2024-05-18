@@ -3,6 +3,7 @@ package com.aiden.trading.dto.user.res;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 public class UserInfoModelResp implements Serializable {
@@ -16,4 +17,6 @@ public class UserInfoModelResp implements Serializable {
     private  String avatar;
     // 介绍
     private String  desc;
+    //角色
+    private List<?> roles;
 }

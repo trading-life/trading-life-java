@@ -24,10 +24,5 @@ public class UserInfoController {
     @Resource
     private IUserInfoService userInfoService;
 
-    // 查询登录状态，浏览器访问： http://localhost:8081/user/isLogin
-    @GetMapping("getUserInfo")
-    public Result<UserInfoModelResp> getUserInfo() {
-        UserInfoModelResp ret = userInfoService.getUserInfoModel(Integer.valueOf((String) StpUtil.getLoginId()));
-        return Result.data(ret);
-    }
+
 }
