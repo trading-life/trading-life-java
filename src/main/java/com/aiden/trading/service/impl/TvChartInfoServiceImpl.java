@@ -100,7 +100,7 @@ public class TvChartInfoServiceImpl extends ServiceImpl<TvChartInfoDao, TvChartI
         LambdaQueryWrapper<TvChartInfo> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(TvChartInfo::getUser, loginId);
         queryWrapper.eq(TvChartInfo::getClient, clientId);
-        TvChartInfo tvChartInfo = baseMapper.selectOne(queryWrapper);
+        TvChartInfo tvChartInfo = baseMapper.selectOne(queryWrapper,false);
         return !Objects.nonNull(tvChartInfo);
     }
 }

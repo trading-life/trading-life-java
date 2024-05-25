@@ -5,6 +5,7 @@ import cn.dev33.satoken.stp.StpUtil;
 import com.aiden.trading.dto.Result;
 import com.aiden.trading.dto.user.req.LoginReq;
 import com.aiden.trading.dto.user.res.UserInfoModelResp;
+import com.aiden.trading.dto.user.res.LoginResp;
 import com.aiden.trading.entity.UserInfo;
 import com.aiden.trading.service.IUserInfoService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -21,11 +22,12 @@ public class UserAuthController {
     private IUserInfoService userInfoService;
 
     @PostMapping("login")
-    public Result<?> doLogin(@RequestBody LoginReq loginReq) {
+    public Result<LoginResp> doLogin(@RequestBody LoginReq loginReq) {
         List<UserInfo> users = userInfoService.getUserInfos(loginReq.getUsername());
         UserInfo loginUser = userInfoService.validUser(users, loginReq);
         StpUtil.login(loginUser.getId());
-        SaTokenInfo tokenInfo = StpUtil.getTokenInfo();
+        LoginResp tokenInfo = new LoginResp();
+        tokenInfo.setToken(StpUtil.getTokenValue());
         return Result.data(tokenInfo);
     }
 

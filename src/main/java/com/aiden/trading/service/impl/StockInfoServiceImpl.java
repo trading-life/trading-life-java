@@ -50,10 +50,12 @@ public class StockInfoServiceImpl extends ServiceImpl<StockInfoDao, StockInfo> i
         if (StringUtils.isNotBlank(ticker)) {
             String[] s = ticker.split(":");
             queryWrapper.eq(StockInfo::getExchangeCode,s[0]);
-            String[] s1 = s[1].split("/");
+            if (s.length>=2) {
+                String[] s1 = s[1].split("/");
 
-            queryWrapper.eq(StockInfo::getCode,s1[0]);
-            queryWrapper.eq(StockInfo::getCurrency,s1[1]);
+                queryWrapper.eq(StockInfo::getCode, s1[0]);
+                queryWrapper.eq(StockInfo::getCurrency, s1[1]);
+            }
         }
         if (StringUtils.isNotBlank(userInput)) {
             queryWrapper.like(StockInfo::getCode,userInput)
